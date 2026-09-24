@@ -38,6 +38,7 @@ export async function updateUserEmail(username, email) {
 
     try {
         await setDoc(userRef, {
+            username: normalizedUsername,
             email: email,
             lastEmailSubmittedAt: serverTimestamp()
         }, { merge: true });

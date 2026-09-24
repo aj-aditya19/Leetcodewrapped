@@ -7,6 +7,14 @@ import Wrapped from './components/Wrapped';
 import { fetchAllUserData } from './api/leetcode';
 import { saveUserSearch } from './api/db';
 
+// Accepts a bare username or a profile URL like https://leetcode.com/u/name/
+function extractUsername(input) {
+  const trimmed = input.trim().replace(/^@/, '');
+  const match = trimmed.match(/leetcode\.(?:com|cn)\/(?:u\/)?([^/?#\s]+)/i);
+  const username = match ? match[1] : trimmed.replace(/\/+$/, '');
+  return /^[\w.-]+$/.test(username) ? username : '';
+}
+
 function App() {
   const [stage, setStage] = useState('landing'); // landing, loading, wrapped
   const [userData, setUserData] = useState(null);
@@ -14,7 +22,12 @@ function App() {
   const [error, setError] = useState('');
   const posthog = useAnalytics();
 
-  const handleSubmit = async (inputUsername) => {
+  const handleSubmit = async (rawInput) => {
+    const inputUsername = extractUsername(rawInput);
+    if (!inputUsername) {
+      setError('Please enter a valid LeetCode username or profile URL');
+      return;
+    }
     setError('');
     setUsername(inputUsername);
     setStage('loading');
