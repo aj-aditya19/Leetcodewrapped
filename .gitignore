@@ -5,3 +5,4 @@
 .env
 .env.local
 firestore.rules
+package-lock.json

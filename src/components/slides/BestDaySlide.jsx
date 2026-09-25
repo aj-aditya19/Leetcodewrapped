@@ -2,10 +2,17 @@ import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import ShareButton from '../ShareButton';
 
+<<<<<<< Updated upstream
 const YEAR = 2025;
 
+=======
+>>>>>>> Stashed changes
 function BestDaySlide({ data, username, avatar }) {
   const calendarData = data.calendar?.submissionCalendar || '{}';
+  const yearLabel = useMemo(() => {
+    const now = new Date();
+    return `${now.getUTCFullYear() - 1}-${now.getUTCFullYear()}`;
+  }, []);
 
   const { bestDay, bestDaySubmissions, formattedDate, dayOfWeek, totalDays } = useMemo(() => {
     let submissionMap = {};
@@ -19,6 +26,12 @@ function BestDaySlide({ data, username, avatar }) {
       'July', 'August', 'September', 'October', 'November', 'December'];
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+    // Trailing year: today back to this same date last year, instead of a
+    // fixed calendar year.
+    const now = new Date();
+    const windowStart = new Date(now);
+    windowStart.setUTCFullYear(windowStart.getUTCFullYear() - 1);
+
     // Find the day with most submissions
     let maxTimestamp = null;
     let maxSubs = 0;
@@ -27,9 +40,8 @@ function BestDaySlide({ data, username, avatar }) {
     Object.entries(submissionMap).forEach(([timestamp, count]) => {
       // Use UTC to match LeetCode's timezone
       const date = new Date(parseInt(timestamp) * 1000);
-      const year = date.getUTCFullYear();
 
-      if (year === YEAR) {
+      if (date >= windowStart && date <= now) {
         if (count > 0) daysWithActivity++;
         if (count > maxSubs) {
           maxSubs = count;
@@ -183,7 +195,7 @@ function BestDaySlide({ data, username, avatar }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            <div style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>No data for {YEAR}</div>
+            <div style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>No data for {yearLabel}</div>
             <div style={{ fontSize: '0.9rem', opacity: 0.7 }}>Start coding to find your best day!</div>
           </motion.div>
         )}

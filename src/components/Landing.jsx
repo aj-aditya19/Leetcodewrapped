@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 function Landing({ onSubmit, error }) {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [snowflakes, setSnowflakes] = useState([]);
+  const now = new Date();
+  const yearLabel = `${now.getUTCFullYear() - 1}-${now.getUTCFullYear()}`;
 
   useEffect(() => {
     const flakes = [...Array(50)].map((_, i) => ({
@@ -46,7 +48,7 @@ function Landing({ onSubmit, error }) {
             src="/leetcodewrapped.png"
             alt="LeetCode"
             className="logo"
-            style={{ animation: 'none', width: '160px', height: '160px' }}
+            style={{ animation: "none", width: "160px", height: "160px" }}
           />
         </motion.div>
 
@@ -54,19 +56,27 @@ function Landing({ onSubmit, error }) {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          style={{ background: 'none', WebkitBackgroundClip: 'unset', WebkitTextFillColor: 'unset' }}
+          style={{
+            background: "none",
+            WebkitBackgroundClip: "unset",
+            WebkitTextFillColor: "unset",
+          }}
         >
-          <span style={{ color: '#fea216' }}>leet</span>
-          <span style={{ color: '#b3b3b3' }}>code</span>
+          <span style={{ color: "#fea216" }}>leet</span>
+          <span style={{ color: "#b3b3b3" }}>code</span>
           <br />
-          <span style={{
-            background: 'linear-gradient(to top, #f32426, #ffffff)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            fontStyle: 'italic',
-            paddingRight: '0.2em'
-          }}>wrapped</span>
+          <span
+            style={{
+              background: "linear-gradient(to top, #f32426, #ffffff)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              fontStyle: "italic",
+              paddingRight: "0.2em",
+            }}
+          >
+            wrapped
+          </span>
         </motion.h1>
 
         <motion.div
@@ -75,7 +85,7 @@ function Landing({ onSubmit, error }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          2025
+          {yearLabel}
         </motion.div>
 
         <motion.form
@@ -85,11 +95,13 @@ function Landing({ onSubmit, error }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.7 }}
         >
-          <div style={{
-            position: 'relative',
-            width: '100%',
-            maxWidth: '400px',
-          }}>
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: "400px",
+            }}
+          >
             <input
               type="text"
               className="username-input"
@@ -98,12 +110,12 @@ function Landing({ onSubmit, error }) {
               onChange={(e) => setUsername(e.target.value)}
               disabled={isSubmitting}
               style={{
-                paddingRight: '60px',
-                borderRadius: '50px',
-                height: '56px',
-                paddingLeft: '24px',
-                background: 'rgba(45, 45, 45, 0.8)',
-                border: '2px solid rgba(255, 161, 22, 0.4)',
+                paddingRight: "60px",
+                borderRadius: "50px",
+                height: "56px",
+                paddingLeft: "24px",
+                background: "rgba(45, 45, 45, 0.8)",
+                border: "2px solid rgba(255, 161, 22, 0.4)",
               }}
             />
 
@@ -112,33 +124,36 @@ function Landing({ onSubmit, error }) {
               type="submit"
               disabled={isSubmitting || !username.trim()}
               style={{
-                position: 'absolute',
-                right: '6px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: '44px',
-                height: '44px',
-                borderRadius: '50%',
-                background: username.trim() ? 'var(--gradient-orange)' : 'rgba(255, 161, 22, 0.3)',
-                border: 'none',
-                cursor: isSubmitting || !username.trim() ? 'default' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                position: "absolute",
+                right: "6px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                width: "44px",
+                height: "44px",
+                borderRadius: "50%",
+                background: username.trim()
+                  ? "var(--gradient-orange)"
+                  : "rgba(255, 161, 22, 0.3)",
+                border: "none",
+                cursor:
+                  isSubmitting || !username.trim() ? "default" : "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 opacity: username.trim() ? 1 : 0.5,
               }}
             >
               {isSubmitting ? (
                 <motion.div
                   style={{
-                    width: '20px',
-                    height: '20px',
-                    border: '2px solid rgba(255,255,255,0.3)',
-                    borderTopColor: '#fff',
-                    borderRadius: '50%',
+                    width: "20px",
+                    height: "20px",
+                    border: "2px solid rgba(255,255,255,0.3)",
+                    borderTopColor: "#fff",
+                    borderRadius: "50%",
                   }}
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                 />
               ) : (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
@@ -161,38 +176,40 @@ function Landing({ onSubmit, error }) {
       </div>
 
       {/* Snowflakes */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        overflow: 'hidden',
-        pointerEvents: 'none',
-      }}>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          overflow: "hidden",
+          pointerEvents: "none",
+        }}
+      >
         {snowflakes.map((flake) => (
           <motion.div
             key={flake.id}
             style={{
-              position: 'absolute',
+              position: "absolute",
               left: `${flake.x}%`,
-              top: '-20px',
+              top: "-20px",
               width: flake.size,
               height: flake.size,
-              borderRadius: '50%',
-              background: 'white',
+              borderRadius: "50%",
+              background: "white",
               opacity: flake.opacity,
-              filter: 'blur(0.5px)',
+              filter: "blur(0.5px)",
             }}
             animate={{
-              y: ['0vh', '110vh'],
+              y: ["0vh", "110vh"],
               x: [0, Math.sin(flake.id) * 50],
             }}
             transition={{
               duration: flake.duration,
               repeat: Infinity,
               delay: flake.delay,
-              ease: 'linear',
+              ease: "linear",
             }}
           />
         ))}

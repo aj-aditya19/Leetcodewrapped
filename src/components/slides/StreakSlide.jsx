@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useState, useMemo } from 'react';
 import ShareButton from '../ShareButton';
 
+<<<<<<< Updated upstream
 const YEAR = 2025;
 
 function StreakSlide({ data, username, avatar }) {
@@ -9,6 +10,14 @@ function StreakSlide({ data, username, avatar }) {
 
   // Calculate longest streak in 2025
   const longestStreak2025 = useMemo(() => {
+=======
+function StreakSlide({ data, username, avatar }) {
+  const [displayStreak, setDisplayStreak] = useState(0);
+
+  // Calculate longest streak in the trailing year (today back to this same
+  // date last year), so it stays current instead of being locked to 2025.
+  const longestStreak = useMemo(() => {
+>>>>>>> Stashed changes
     const calendarData = data.calendar?.submissionCalendar || '{}';
     let submissionMap = {};
     try {
@@ -17,10 +26,14 @@ function StreakSlide({ data, username, avatar }) {
       return 0;
     }
 
+    const now = new Date();
+    const windowStart = new Date(now);
+    windowStart.setUTCFullYear(windowStart.getUTCFullYear() - 1);
+
     const datesWithSubmissions = new Set();
     Object.entries(submissionMap).forEach(([timestamp, count]) => {
       const date = new Date(parseInt(timestamp) * 1000);
-      if (date.getUTCFullYear() === YEAR && count > 0) {
+      if (date >= windowStart && date <= now && count > 0) {
         const year = date.getUTCFullYear();
         const month = String(date.getUTCMonth() + 1).padStart(2, '0');
         const day = String(date.getUTCDate()).padStart(2, '0');
@@ -53,13 +66,22 @@ function StreakSlide({ data, username, avatar }) {
   useEffect(() => {
     const duration = 1500;
     const steps = 40;
+<<<<<<< Updated upstream
     const increment = longestStreak2025 / steps;
+=======
+    const increment = longestStreak / steps;
+>>>>>>> Stashed changes
     let current = 0;
 
     const timer = setInterval(() => {
       current += increment;
+<<<<<<< Updated upstream
       if (current >= longestStreak2025) {
         setDisplayStreak(longestStreak2025);
+=======
+      if (current >= longestStreak) {
+        setDisplayStreak(longestStreak);
+>>>>>>> Stashed changes
         clearInterval(timer);
       } else {
         setDisplayStreak(Math.floor(current));
@@ -67,7 +89,11 @@ function StreakSlide({ data, username, avatar }) {
     }, duration / steps);
 
     return () => clearInterval(timer);
+<<<<<<< Updated upstream
   }, [longestStreak2025]);
+=======
+  }, [longestStreak]);
+>>>>>>> Stashed changes
 
   return (
     <motion.div
@@ -120,7 +146,11 @@ function StreakSlide({ data, username, avatar }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
         >
+<<<<<<< Updated upstream
           day{longestStreak2025 !== 1 ? 's' : ''}
+=======
+          day{longestStreak !== 1 ? 's' : ''}
+>>>>>>> Stashed changes
         </motion.div>
       </div>
       <ShareButton username={username} avatar={avatar} />

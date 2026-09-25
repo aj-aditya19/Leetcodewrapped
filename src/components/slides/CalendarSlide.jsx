@@ -2,10 +2,17 @@ import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import ShareButton from '../ShareButton';
 
+<<<<<<< Updated upstream
 const YEAR = 2025;
 
+=======
+>>>>>>> Stashed changes
 function CalendarSlide({ data, username, avatar }) {
   const calendarData = data.calendar?.submissionCalendar || '{}';
+  const yearLabel = useMemo(() => {
+    const now = new Date();
+    return `${now.getUTCFullYear() - 1}-${now.getUTCFullYear()}`;
+  }, []);
 
   // Parse submission calendar and create visualization data
   const { allMonths, stats, mostActiveMonthData, mostActiveMonthIdx } = useMemo(() => {
@@ -16,29 +23,48 @@ function CalendarSlide({ data, username, avatar }) {
       submissionMap = {};
     }
 
-    // Calculate stats for the year
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    // Trailing 12 calendar months ending with the current month, so the
+    // grid always reflects the most recent year of activity instead of a
+    // fixed calendar year that goes stale.
+    const now = new Date();
+    const monthsWindow = [];
+    for (let i = 11; i >= 0; i--) {
+      let month = now.getUTCMonth() - i;
+      let year = now.getUTCFullYear();
+      while (month < 0) {
+        month += 12;
+        year -= 1;
+      }
+      monthsWindow.push({ year, month });
+    }
+    const monthKey = (year, month) => `${year}-${month}`;
+    const windowKeys = new Set(monthsWindow.map(({ year, month }) => monthKey(year, month)));
+
+    // Calculate stats for the window
     let totalSubmissions = 0;
     let maxSubmissions = 0;
     let activeDaysCount = 0;
     const daysWithSubmissions = new Set();
 
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const monthSubmissions = {};
-    monthNames.forEach(m => monthSubmissions[m] = 0);
-
-    const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    const isLeapYear = (YEAR % 4 === 0 && YEAR % 100 !== 0) || (YEAR % 400 === 0);
-    if (isLeapYear) daysInMonth[1] = 29;
+    monthsWindow.forEach(({ year, month }) => {
+      monthSubmissions[monthKey(year, month)] = 0;
+    });
 
     const daySubmissionMap = {};
 
     Object.entries(submissionMap).forEach(([timestamp, count]) => {
       const date = new Date(parseInt(timestamp) * 1000);
-      if (date.getUTCFullYear() === YEAR) {
-        const year = date.getUTCFullYear();
-        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+      const year = date.getUTCFullYear();
+      const month = date.getUTCMonth();
+      const key = monthKey(year, month);
+
+      if (windowKeys.has(key)) {
+        const monthStr = String(month + 1).padStart(2, '0');
         const day = String(date.getUTCDate()).padStart(2, '0');
-        const dayKey = `${year}-${month}-${day}`;
+        const dayKey = `${year}-${monthStr}-${day}`;
 
         daySubmissionMap[dayKey] = (daySubmissionMap[dayKey] || 0) + count;
         totalSubmissions += count;
@@ -49,26 +75,32 @@ function CalendarSlide({ data, username, avatar }) {
           activeDaysCount++;
         }
 
-        const monthIdx = date.getUTCMonth();
-        monthSubmissions[monthNames[monthIdx]] += count;
+        monthSubmissions[key] += count;
       }
     });
 
     let mostActiveMonth = '';
     let activeMonthIdx = 0;
     let maxMonthSubs = 0;
-    Object.entries(monthSubmissions).forEach(([month, count]) => {
+    monthsWindow.forEach(({ year, month }, idx) => {
+      const count = monthSubmissions[monthKey(year, month)];
       if (count > maxMonthSubs) {
         maxMonthSubs = count;
-        mostActiveMonth = month;
-        activeMonthIdx = monthNames.indexOf(month);
+        mostActiveMonth = monthNames[month];
+        activeMonthIdx = idx;
       }
     });
 
-    const months = monthNames.map((name, idx) => {
-      const numDays = daysInMonth[idx];
+    const daysInMonthFor = (year, month) => {
+      const lengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+      return month === 1 && isLeapYear ? 29 : lengths[month];
+    };
+
+    const months = monthsWindow.map(({ year, month }, idx) => {
+      const numDays = daysInMonthFor(year, month);
       const days = [];
-      const firstDay = new Date(Date.UTC(YEAR, idx, 1));
+      const firstDay = new Date(Date.UTC(year, month, 1));
       const startDayOfWeek = firstDay.getUTCDay();
 
       for (let i = 0; i < startDayOfWeek; i++) {
@@ -76,9 +108,9 @@ function CalendarSlide({ data, username, avatar }) {
       }
 
       for (let d = 1; d <= numDays; d++) {
-        const month = String(idx + 1).padStart(2, '0');
+        const monthStr = String(month + 1).padStart(2, '0');
         const day = String(d).padStart(2, '0');
-        const dayKey = `${YEAR}-${month}-${day}`;
+        const dayKey = `${year}-${monthStr}-${day}`;
         const subs = daySubmissionMap[dayKey] || 0;
 
         let level = 0;
@@ -90,7 +122,7 @@ function CalendarSlide({ data, username, avatar }) {
         days.push({ day: d, submissions: subs, level, date: dayKey });
       }
 
-      return { name, days, total: monthSubmissions[name], idx };
+      return { name: monthNames[month], year, days, total: monthSubmissions[monthKey(year, month)], idx };
     });
 
     return {
@@ -128,7 +160,7 @@ function CalendarSlide({ data, username, avatar }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          Most productive month in {YEAR}
+          Most productive month in {yearLabel}
         </motion.div>
 
         {stats.activeDays > 0 && mostActiveMonthData ? (
@@ -223,7 +255,7 @@ function CalendarSlide({ data, username, avatar }) {
             >
               {allMonths.map((month, monthIdx) => (
                 <motion.div
-                  key={month.name}
+                  key={`${month.name}-${month.year}`}
                   style={{
                     background: monthIdx === mostActiveMonthIdx ? 'rgba(64, 196, 169, 0.15)' : 'rgba(255, 255, 255, 0.03)',
                     borderRadius: '5px',
@@ -292,7 +324,7 @@ function CalendarSlide({ data, username, avatar }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            No activity recorded in {YEAR}
+            No activity recorded in {yearLabel}
           </motion.div>
         )}
       </div>

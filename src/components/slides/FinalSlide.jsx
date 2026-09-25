@@ -6,7 +6,10 @@ import { db } from '../../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { updateUserEmail } from '../../api/db';
 
+<<<<<<< Updated upstream
 const YEAR = 2025;
+=======
+>>>>>>> Stashed changes
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const FULL_DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -23,6 +26,11 @@ const languageIcons = {
 };
 
 function FinalSlide({ data, username, avatar }) {
+  const yearLabel = useMemo(() => {
+    const now = new Date();
+    return `${now.getUTCFullYear() - 1}-${now.getUTCFullYear()}`;
+  }, []);
+
   const easy = data.solved?.easySolved || 0;
   const medium = data.solved?.mediumSolved || 0;
   const hard = data.solved?.hardSolved || 0;
@@ -51,9 +59,15 @@ function FinalSlide({ data, username, avatar }) {
     let longestStreak = 0;
     const sortedDates = [];
 
+    // Trailing year: today back to this same date last year, instead of a
+    // fixed calendar year.
+    const now = new Date();
+    const windowStart = new Date(now);
+    windowStart.setUTCFullYear(windowStart.getUTCFullYear() - 1);
+
     Object.entries(submissionMap).forEach(([timestamp, count]) => {
       const date = new Date(parseInt(timestamp) * 1000);
-      if (date.getUTCFullYear() === YEAR && count > 0) {
+      if (date >= windowStart && date <= now && count > 0) {
         activeDays++;
         totalSubmissions += count;
         const month = date.getUTCMonth();
@@ -162,7 +176,11 @@ function FinalSlide({ data, username, avatar }) {
         <div style="font-family: sans-serif; color: #333;">
           <p>hey <strong>${username}</strong>,</p>
           <p>it's collin here, developer of leetcodewrapped. thanks for trying it out!</p>
+<<<<<<< Updated upstream
           <p>here's your 2025 leetcode journey wrapped:</p>
+=======
+          <p>here's your ${yearLabel} leetcode journey wrapped:</p>
+>>>>>>> Stashed changes
           <ul style="list-style-type: disc; padding-left: 20px;">
             <li>favorite day to leetcode: <strong>${stats.bestWeekday.toLowerCase()}</strong> (${stats.bestWeekdayCount} submissions)</li>
             <li>longest streak: <strong>${stats.longestStreak}</strong></li>
@@ -185,7 +203,11 @@ function FinalSlide({ data, username, avatar }) {
       await addDoc(collection(db, 'mail'), {
         to: email,
         message: {
+<<<<<<< Updated upstream
           subject: 'Your LeetCode Wrapped 2025',
+=======
+          subject: `Your LeetCode Wrapped ${yearLabel}`,
+>>>>>>> Stashed changes
           html: summaryHtml,
         },
         username: username,

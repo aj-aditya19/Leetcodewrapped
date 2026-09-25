@@ -2,10 +2,17 @@ import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import ShareButton from '../ShareButton';
 
+<<<<<<< Updated upstream
 const YEAR = 2025;
 
+=======
+>>>>>>> Stashed changes
 function WeekdaySlide({ data, username, avatar }) {
   const calendarData = data.calendar?.submissionCalendar || '{}';
+  const yearLabel = useMemo(() => {
+    const now = new Date();
+    return `${now.getUTCFullYear() - 1}-${now.getUTCFullYear()}`;
+  }, []);
 
   const { mostActiveDay, dayStats, totalSubs } = useMemo(() => {
     let submissionMap = {};
@@ -19,10 +26,16 @@ function WeekdaySlide({ data, username, avatar }) {
     const daySubmissions = [0, 0, 0, 0, 0, 0, 0];
     let total = 0;
 
+    // Trailing year: today back to this same date last year, instead of a
+    // fixed calendar year.
+    const now = new Date();
+    const windowStart = new Date(now);
+    windowStart.setUTCFullYear(windowStart.getUTCFullYear() - 1);
+
     Object.entries(submissionMap).forEach(([timestamp, count]) => {
       const date = new Date(parseInt(timestamp) * 1000);
       // Use UTC to match LeetCode's timezone
-      if (date.getUTCFullYear() === YEAR) {
+      if (date >= windowStart && date <= now) {
         const dayOfWeek = date.getUTCDay();
         daySubmissions[dayOfWeek] += count;
         total += count;
@@ -90,7 +103,7 @@ function WeekdaySlide({ data, username, avatar }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          Your favorite day to leetcode in {YEAR}
+          Your favorite day to leetcode in {yearLabel}
         </motion.div>
 
         {totalSubs > 0 ? (
@@ -205,7 +218,7 @@ function WeekdaySlide({ data, username, avatar }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            <div style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>No data for {YEAR}</div>
+            <div style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>No data for {yearLabel}</div>
             <div style={{ fontSize: '0.9rem', opacity: 0.7 }}>Start coding to see your weekly patterns!</div>
           </motion.div>
         )}

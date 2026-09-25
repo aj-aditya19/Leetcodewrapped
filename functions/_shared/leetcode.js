@@ -1,12 +1,12 @@
 // Shared utility for LeetCode GraphQL requests
-const LEETCODE_API = 'https://leetcode.com/graphql';
+const LEETCODE_API = "https://leetcode.com/graphql";
 
 export async function fetchLeetCode(query, variables = {}) {
   const response = await fetch(LEETCODE_API, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'Referer': 'https://leetcode.com',
+      "Content-Type": "application/json",
+      Referer: "https://leetcode.com",
     },
     body: JSON.stringify({ query, variables }),
   });
@@ -16,9 +16,9 @@ export async function fetchLeetCode(query, variables = {}) {
   }
 
   const data = await response.json();
-  
+
   if (data.errors) {
-    throw new Error(data.errors[0]?.message || 'GraphQL error');
+    throw new Error(data.errors[0]?.message || "GraphQL error");
   }
 
   return data.data;
@@ -29,8 +29,8 @@ export function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      "Content-Type": "application/json",
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
     },
   });
 }
@@ -38,7 +38,7 @@ export function jsonResponse(data, status = 200) {
 export function errorResponse(message, status = 500) {
   return new Response(JSON.stringify({ error: message }), {
     status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { "Content-Type": "application/json" },
   });
 }
 
@@ -174,4 +174,3 @@ export const queries = {
     }
   `,
 };
-

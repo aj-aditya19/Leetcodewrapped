@@ -2,6 +2,11 @@ import { motion } from 'framer-motion';
 
 function IntroSlide({ username, data }) {
   const avatar = data.profile?.avatar;
+<<<<<<< Updated upstream
+=======
+  const now = new Date();
+  const yearLabel = `${now.getUTCFullYear() - 1}-${now.getUTCFullYear()}`;
+>>>>>>> Stashed changes
 
   return (
     <motion.div
@@ -50,7 +55,11 @@ function IntroSlide({ username, data }) {
             backgroundClip: 'text',
           }}>{username}'s</span>
           <br />
+<<<<<<< Updated upstream
           <span style={{ color: 'white', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>2025 LeetCode Journey</span>
+=======
+          <span style={{ color: 'white', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>{yearLabel} LeetCode Journey</span>
+>>>>>>> Stashed changes
         </motion.h1>
 
         <motion.div
