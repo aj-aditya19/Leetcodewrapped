@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import html2canvas from 'html2canvas';
+import { getWrappedWindow } from '../wrappedWindow';
 
 function ShareButton({ username, avatar, inline = false }) {
   const handleShare = async () => {
@@ -161,7 +162,7 @@ function ShareButton({ username, avatar, inline = false }) {
       });
 
       // Always use mobile-style layout
-      // leetcode wrapped 2025 text centered at top - with colors
+      // leetcode wrapped <year> text centered at top - with colors
       const centerX = finalCanvas.width / 2;
       ctx.textAlign = 'left';
       
@@ -173,7 +174,8 @@ function ShareButton({ username, avatar, inline = false }) {
       ctx.font = 'italic bold 56px system-ui, -apple-system, sans-serif';
       const wrappedWidth = ctx.measureText('wrapped').width;
       ctx.font = 'bold 56px system-ui, -apple-system, sans-serif';
-      const yearWidth = ctx.measureText(' 2025').width;
+      const yearText = ` ${getWrappedWindow().label}`;
+      const yearWidth = ctx.measureText(yearText).width;
       const textTotalWidth = leetWidth + codeWidth + spaceWidth + wrappedWidth + yearWidth;
       const startX = centerX - textTotalWidth / 2;
       
@@ -194,7 +196,7 @@ function ShareButton({ username, avatar, inline = false }) {
       
       ctx.font = 'bold 56px system-ui, -apple-system, sans-serif';
       ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-      ctx.fillText(' 2025', currentX, 70);
+      ctx.fillText(yearText, currentX, 70);
 
       // Big logo below text
       const logoSize = 180;
@@ -280,7 +282,7 @@ function ShareButton({ username, avatar, inline = false }) {
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
-            await navigator.share({ files: [file], title: 'leetcode wrapped 2025' });
+            await navigator.share({ files: [file], title: `leetcode wrapped ${getWrappedWindow().label}` });
             return;
           } catch (err) {}
         }

@@ -2,7 +2,9 @@ import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import ShareButton from '../ShareButton';
 
-const YEAR = 2025;
+import { getWrappedWindow, isInWindow } from '../../wrappedWindow';
+
+const WRAPPED = getWrappedWindow();
 
 function BestDaySlide({ data, username, avatar }) {
   const calendarData = data.calendar?.submissionCalendar || '{}';
@@ -27,9 +29,8 @@ function BestDaySlide({ data, username, avatar }) {
     Object.entries(submissionMap).forEach(([timestamp, count]) => {
       // Use UTC to match LeetCode's timezone
       const date = new Date(parseInt(timestamp) * 1000);
-      const year = date.getUTCFullYear();
 
-      if (year === YEAR) {
+      if (isInWindow(date, WRAPPED)) {
         if (count > 0) daysWithActivity++;
         if (count > maxSubs) {
           maxSubs = count;
@@ -183,7 +184,7 @@ function BestDaySlide({ data, username, avatar }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            <div style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>No data for {YEAR}</div>
+            <div style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>No data for {WRAPPED.label}</div>
             <div style={{ fontSize: '0.9rem', opacity: 0.7 }}>Start coding to find your best day!</div>
           </motion.div>
         )}

@@ -2,13 +2,15 @@ import { motion } from 'framer-motion';
 import { useEffect, useState, useMemo } from 'react';
 import ShareButton from '../ShareButton';
 
-const YEAR = 2025;
+import { getWrappedWindow, isInWindow } from '../../wrappedWindow';
+
+const WRAPPED = getWrappedWindow();
 
 function StreakSlide({ data, username, avatar }) {
   const [displayStreak, setDisplayStreak] = useState(0);
 
-  // Calculate longest streak in 2025
-  const longestStreak2025 = useMemo(() => {
+  // Calculate longest streak in the wrapped window
+  const longestStreak = useMemo(() => {
     const calendarData = data.calendar?.submissionCalendar || '{}';
     let submissionMap = {};
     try {
@@ -20,7 +22,7 @@ function StreakSlide({ data, username, avatar }) {
     const datesWithSubmissions = new Set();
     Object.entries(submissionMap).forEach(([timestamp, count]) => {
       const date = new Date(parseInt(timestamp) * 1000);
-      if (date.getUTCFullYear() === YEAR && count > 0) {
+      if (isInWindow(date, WRAPPED) && count > 0) {
         const year = date.getUTCFullYear();
         const month = String(date.getUTCMonth() + 1).padStart(2, '0');
         const day = String(date.getUTCDate()).padStart(2, '0');
@@ -53,13 +55,13 @@ function StreakSlide({ data, username, avatar }) {
   useEffect(() => {
     const duration = 1500;
     const steps = 40;
-    const increment = longestStreak2025 / steps;
+    const increment = longestStreak / steps;
     let current = 0;
 
     const timer = setInterval(() => {
       current += increment;
-      if (current >= longestStreak2025) {
-        setDisplayStreak(longestStreak2025);
+      if (current >= longestStreak) {
+        setDisplayStreak(longestStreak);
         clearInterval(timer);
       } else {
         setDisplayStreak(Math.floor(current));
@@ -67,7 +69,7 @@ function StreakSlide({ data, username, avatar }) {
     }, duration / steps);
 
     return () => clearInterval(timer);
-  }, [longestStreak2025]);
+  }, [longestStreak]);
 
   return (
     <motion.div
@@ -120,7 +122,7 @@ function StreakSlide({ data, username, avatar }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
         >
-          day{longestStreak2025 !== 1 ? 's' : ''}
+          day{longestStreak !== 1 ? 's' : ''}
         </motion.div>
       </div>
       <ShareButton username={username} avatar={avatar} />

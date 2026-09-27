@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { getWrappedWindow } from '../../wrappedWindow';
 
 function IntroSlide({ username, data }) {
   const avatar = data.profile?.avatar;
@@ -50,7 +51,7 @@ function IntroSlide({ username, data }) {
             backgroundClip: 'text',
           }}>{username}'s</span>
           <br />
-          <span style={{ color: 'white', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>2025 LeetCode Journey</span>
+          <span style={{ color: 'white', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>{getWrappedWindow().label} LeetCode Journey</span>
         </motion.h1>
 
         <motion.div

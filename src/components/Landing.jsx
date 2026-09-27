@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { getWrappedWindow } from '../wrappedWindow';
 
 function Landing({ onSubmit, error }) {
   const [username, setUsername] = useState('');
@@ -75,7 +76,7 @@ function Landing({ onSubmit, error }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          2025
+          {getWrappedWindow().label}
         </motion.div>
 
         <motion.form

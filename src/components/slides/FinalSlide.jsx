@@ -6,7 +6,9 @@ import { db } from '../../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { updateUserEmail } from '../../api/db';
 
-const YEAR = 2025;
+import { getWrappedWindow, isInWindow } from '../../wrappedWindow';
+
+const WRAPPED = getWrappedWindow();
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const FULL_DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -53,7 +55,7 @@ function FinalSlide({ data, username, avatar }) {
 
     Object.entries(submissionMap).forEach(([timestamp, count]) => {
       const date = new Date(parseInt(timestamp) * 1000);
-      if (date.getUTCFullYear() === YEAR && count > 0) {
+      if (isInWindow(date, WRAPPED) && count > 0) {
         activeDays++;
         totalSubmissions += count;
         const month = date.getUTCMonth();
@@ -162,7 +164,7 @@ function FinalSlide({ data, username, avatar }) {
         <div style="font-family: sans-serif; color: #333;">
           <p>hey <strong>${username}</strong>,</p>
           <p>it's collin here, developer of leetcodewrapped. thanks for trying it out!</p>
-          <p>here's your 2025 leetcode journey wrapped:</p>
+          <p>here's your ${WRAPPED.label} leetcode journey wrapped:</p>
           <ul style="list-style-type: disc; padding-left: 20px;">
             <li>favorite day to leetcode: <strong>${stats.bestWeekday.toLowerCase()}</strong> (${stats.bestWeekdayCount} submissions)</li>
             <li>longest streak: <strong>${stats.longestStreak}</strong></li>
@@ -185,7 +187,7 @@ function FinalSlide({ data, username, avatar }) {
       await addDoc(collection(db, 'mail'), {
         to: email,
         message: {
-          subject: 'Your LeetCode Wrapped 2025',
+          subject: `Your LeetCode Wrapped ${WRAPPED.label}`,
           html: summaryHtml,
         },
         username: username,

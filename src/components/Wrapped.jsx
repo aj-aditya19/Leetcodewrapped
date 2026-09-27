@@ -21,7 +21,7 @@ function Wrapped({ data, username, onRestart }) {
     { component: IntroSlide, props: { username, data } },
     // Activity slides first
     { component: WeekdaySlide, props: { data, username, avatar } },      // Favorite weekday
-    { component: StreakSlide, props: { data, username, avatar } },       // Active days in 2025
+    { component: StreakSlide, props: { data, username, avatar } },       // Longest streak in the wrapped window
     { component: CalendarSlide, props: { data, username, avatar } },     // Best month
     { component: BestDaySlide, props: { data, username, avatar } },      // Most productive day
     // Then the rest

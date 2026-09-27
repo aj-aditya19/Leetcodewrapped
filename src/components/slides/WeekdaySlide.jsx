@@ -2,7 +2,9 @@ import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import ShareButton from '../ShareButton';
 
-const YEAR = 2025;
+import { getWrappedWindow, isInWindow } from '../../wrappedWindow';
+
+const WRAPPED = getWrappedWindow();
 
 function WeekdaySlide({ data, username, avatar }) {
   const calendarData = data.calendar?.submissionCalendar || '{}';
@@ -22,7 +24,7 @@ function WeekdaySlide({ data, username, avatar }) {
     Object.entries(submissionMap).forEach(([timestamp, count]) => {
       const date = new Date(parseInt(timestamp) * 1000);
       // Use UTC to match LeetCode's timezone
-      if (date.getUTCFullYear() === YEAR) {
+      if (isInWindow(date, WRAPPED)) {
         const dayOfWeek = date.getUTCDay();
         daySubmissions[dayOfWeek] += count;
         total += count;
@@ -90,7 +92,7 @@ function WeekdaySlide({ data, username, avatar }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          Your favorite day to leetcode in {YEAR}
+          Your favorite day to leetcode in {WRAPPED.label}
         </motion.div>
 
         {totalSubs > 0 ? (
@@ -205,7 +207,7 @@ function WeekdaySlide({ data, username, avatar }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            <div style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>No data for {YEAR}</div>
+            <div style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>No data for {WRAPPED.label}</div>
             <div style={{ fontSize: '0.9rem', opacity: 0.7 }}>Start coding to see your weekly patterns!</div>
           </motion.div>
         )}
